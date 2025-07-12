@@ -1,13 +1,13 @@
 <template>
-	<v-app-bar color="black" :class="{ 'pl-5': $vuetify.display.lgAndUp }">
-		<v-app-bar-nav-icon
-			v-if="$vuetify.display.mdAndDown"
-			@click.stop="$store.state.app.sideNav = !$store.state.app.sideNav"
-		/>
-		<h3 v-if="$vuetify.display.lgAndUp" id="topnav">{{ $store.getters.appName }}</h3>
-		<h4 v-else-if="$vuetify.display.mdAndDown" id="topnav">{{ $store.getters.appName }}</h4>
+    <v-app-bar color="black" :class="{ 'pl-5': $vuetify.display.lgAndUp }">
+        <v-app-bar-nav-icon
+            v-if="$vuetify.display.mdAndDown"
+            @click.stop="$store.state.app.sideNav = !$store.state.app.sideNav"
+        />
+        <h3 v-if="$vuetify.display.lgAndUp" id="topnav">{{ $store.getters.appName }}</h3>
+        <h4 v-else-if="$vuetify.display.mdAndDown" id="topnav">{{ $store.getters.appName }}</h4>
 
-		<template v-if="$store.getters['auth/getUser'] !== null">
+        <template v-if="$store.getters['auth/getUser'] !== null">
             <v-spacer/>
 
             <!-- help button -->
@@ -31,7 +31,7 @@
                     <template v-if="$vuetify.display.lgAndUp">Asking for </template>Help
                 </template>
                 <template v-else>
-                    <template v-if="$vuetify.display.lgAndUp">Ask for </template>Help
+                <template v-if="$vuetify.display.lgAndUp">Ask for </template>Help
                 </template>
             </v-btn>
 
@@ -41,20 +41,20 @@
                     $store.getters['auth/getUser'] !== null
                     ? (
                         ($store.getters['auth/getUser'].userType === 'admin')
-					    ? 'amber'
-					    : (isUserOnline ? 'green-lighten-2' : 'red-lighten-2')
-					  )
+                            ? 'amber'
+                            : (isUserOnline ? 'green-lighten-2' : 'red-lighten-2')
+                        )
                     : 'grey-lighten-1'"
                 :style="$vuetify.display.mdAndDown ? 'font-size: 12px' : ''"
             >
-				{{ $store.getters['auth/getUser'].name }}
-			</v-chip>
-			<v-avatar
-				size="35"
-                v-if="$vuetify.display.smAndUp"
-                :class="$vuetify.display.smAndUp ? 'ms-3' : ''"
-			>
-				<v-img :src="`${$store.getters.appURL}/crud/uploads/${$store.getters['auth/getUser'].avatar}`">
+                {{ $store.getters['auth/getUser'].name }}
+            </v-chip>
+                <v-avatar
+                    size="35"
+                    v-if="$vuetify.display.smAndUp"
+                    :class="$vuetify.display.smAndUp ? 'ms-3' : ''"
+                >
+                    <v-img :src="`${$store.getters.appURL}/crud/uploads/${$store.getters['auth/getUser'].avatar}`">
                     <div
                         v-if="$store.getters['auth/getUser'].userType !== 'admin'"
                         class="status"
@@ -62,65 +62,86 @@
                     >
                     </div>
                 </v-img>
-			</v-avatar>
-		</template>
+            </v-avatar>
+        </template>
 
-		<!--	Sign out	-->
-		<v-dialog
-			v-model="dialog"
-			max-width="400"
-		>
-			<template v-slot:activator="{ props }">
-				<v-menu>
-					<template
-						v-slot:activator="{ props }"
-					>
-						<v-btn
-							:class="$vuetify.display.mdAndDown ? 'ma-1' : 'ma-3'"
-							icon="mdi-dots-vertical"
-							v-bind="props"/>
-					</template>
-					<v-list>
-						<v-list-item
-							v-bind="props"
-							class="text-red-darken-3 text-uppercase"
-							style="font-size: 1rem;"
-							variant="text"
-						>
-							<v-icon icon="mdi-logout"/>
-							Log Out
-						</v-list-item>
-					</v-list>
-				</v-menu>
-			</template>
-			<v-card class="bg-dark">
-				<v-card-title class="bg-black">
-					<v-icon id="remind">mdi-alert-circle</v-icon>
-					Confirm Logout
-				</v-card-title>
-				<v-card-text>Are you sure you want to log out?</v-card-text>
-				<v-card-actions>
-					<v-spacer></v-spacer>
-					<v-btn
-						color="green-darken-1"
-						variant="text"
-						@click="dialog = false"
+        <!--	Sign out & Fullscreen toggle	-->
+        <v-dialog
+            v-model="dialog"
+            max-width="400"
+        >
+            <template v-slot:activator="{ props }">
+                <v-menu>
+                    <template
+                        v-slot:activator="{ props }"
+                    >
+                        <v-btn
+                        :class="$vuetify.display.mdAndDown ? 'ma-1' : 'ma-3'"
+                        icon="mdi-dots-vertical"
+                        v-bind="props"/>
+                    </template>
+                    <v-list>
+                        <v-list-item
+                            v-if="!isFullscreen"
+                            @click="toggleFullscreen"
+                            class="text-blue-darken-3"
+                            style="font-size: 1rem;"
+                            variant="text"
+                        >
+                            <v-icon icon="mdi-fullscreen"/>
+                            Enter Fullscreen
+                        </v-list-item>
+                        <v-list-item
+                            v-else
+                            @click="toggleFullscreen"
+                            class="text-blue-darken-3"
+                            style="font-size: 1rem;"
+                            variant="text"
+                        >
+                            <v-icon icon="mdi-fullscreen-exit"/>
+                            Exit Fullscreen
+                        </v-list-item>
+                        <v-list-item
+                            @click="dialog = true"
+                            v-bind="props"
+                            class="text-red-darken-3 text-uppercase"
+                            style="font-size: 1rem;"
+                            variant="text"
+                        >
+                            <v-icon icon="mdi-logout"/>
+                            Log Out
+                        </v-list-item>
+                    </v-list>
+                </v-menu>
+            </template>
+            <v-card class="bg-dark">
+                <v-card-title class="bg-black">
+                    <v-icon id="remind">mdi-alert-circle</v-icon>
+                    Confirm Logout
+                </v-card-title>
+                <v-card-text>Are you sure you want to log out?</v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                        color="green-darken-1"
+                        variant="text"
+                        @click="dialog = false"
                         :disabled="signingOut"
-					>
-						Go Back
-					</v-btn>
-					<v-btn
-						color="red-darken-1"
-						variant="text"
-						@click="signOut"
+                    >
+                        Go Back
+                    </v-btn>
+                    <v-btn
+                        color="red-darken-1"
+                        variant="text"
+                        @click="signOut"
                         :loading="signingOut"
-					>
-						Log Out
-					</v-btn>
-				</v-card-actions>
-			</v-card>
-		</v-dialog>
-	</v-app-bar>
+                    >
+                        Log Out
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+    </v-app-bar>
 </template>
 
 
@@ -131,11 +152,12 @@
         name: "TopNav",
         data() {
             return {
-                dialog: false,
-                signingOut: false,
-                signedOut: false,
-                helpDisabled: false,
-                statusTimer: null
+            dialog: false,
+            signingOut: false,
+            signedOut: false,
+            helpDisabled: false,
+            statusTimer: null,
+            isFullScreen: false
             }
         },
         computed: {
@@ -146,9 +168,9 @@
                 let currentTimestamp = this.$store.getters['auth/getUser'].currentTimestamp;
                 let pingTimestamp = this.$store.getters['auth/getUser'].pingTimestamp;
                 if (currentTimestamp === null || pingTimestamp === null)
-                    return false;
+                return false;
                 else
-                    return (currentTimestamp - pingTimestamp) < 13000;
+                return (currentTimestamp - pingTimestamp) < 13000;
             }
         },
         methods: {
@@ -200,7 +222,6 @@
                     },
                     success: (data) => {
                         data = JSON.parse(data);
-
                     },
                     error: (error) => {
                         alert(`ERROR ${error.status}: ${error.statusText}`);
@@ -210,6 +231,14 @@
 
                 // emit help status
                 this.$emit('toggle-help', user.calling);
+            },
+            toggleFullscreen() {
+                if (!this.isFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    document.exitFullscreen();
+                }
+                this.isFullscreen = !this.isFullscreen;
             }
         },
         mounted() {
@@ -218,6 +247,7 @@
                     this.$store.commit('auth/setUserCurrentTimestamp', Date.now());
                 }, 2400);
             }
+            this.isFullscreen = document.fullscreenElement !== null;
         },
         unmounted() {
             if (this.statusTimer)
